@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="PKIArcGISDemo.MainPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:esri="http://schemas.esri.com/arcgis/runtime/2013">
+    <Grid>
+        <esri:MapView x:Name="mapView" Map="{Binding Map}" />
+        <Border Margin="5"
+                BackgroundColor="{AppThemeBinding Light=#dfdfdf,
+                                                  Dark=#303030}"
+                HorizontalOptions="End"
+                MinimumWidthRequest="220"
+                StrokeThickness="1"
+                VerticalOptions="Start">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="10,10,10,10" />
+            </Border.StrokeShape>
+            <VerticalStackLayout Padding="5" Spacing="5">
+                <HorizontalStackLayout>
+                    <Label Text="Portal Address:" />
+                    <Entry x:Name="PortalAddressEntry" WidthRequest="300" />
+                </HorizontalStackLayout>
+                <HorizontalStackLayout>
+                    <Label Text="Portal Item Id:" />
+                    <Entry x:Name="PortalItemIdEntry" WidthRequest="300" />
+                </HorizontalStackLayout>
+                <Button x:Name="OpenCertificatePicker"
+                        Clicked="OpenCertificatePicker_Clicked"
+                        Text="Select Certificate" />
+                <Label x:Name="GeneratedCredentialsLabel"
+                       IsVisible="false"
+                       Text="Generated Credentials: " />
+                <Button x:Name="LoadPortalItemButton"
+                        Clicked="LoadPortalItemButton_Clicked"
+                        IsVisible="False"
+                        Text="Load Portal Item" />
+            </VerticalStackLayout>
+        </Border>
+    </Grid>
+</ContentPage>
