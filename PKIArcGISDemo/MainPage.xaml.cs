@@ -16,39 +16,19 @@ public partial class MainPage : ContentPage
         this.BindingContext = new MapViewModel();
     }
 
-    private async void OpenCertificatePicker_Clicked(object sender, EventArgs e)
-    {
-        var customFileType = new FilePickerFileType(
-                new Dictionary<DevicePlatform, IEnumerable<string>>
-                {
-                    { DevicePlatform.Android, new[] { ".pfx" } },
-                    { DevicePlatform.WinUI, new[] { ".pfx" } },
-                    { DevicePlatform.iOS, new[] { ".pfx" } },
-                    { DevicePlatform.macOS, new[] { ".pfx" } },
-                });
-
-        PickOptions options = new()
-        {
-            PickerTitle = "Please select a .pfx file",
-            FileTypes = customFileType,
-        };
-
-        await SelectCert(options);
-    }
-
     private async void LoadPortalItemButton_Clicked(object sender, EventArgs e)
     {
         await GetPortalItem();
     }
 
-    private async Task SelectCert(PickOptions options)
+    private async Task<Credential> SelectCert()
     {
         try
         {
             var result = await FilePicker.Default.PickAsync();
             if (result != null)
             {
-                var passwordPopup = new CertPasswordPopup();
+                var passwordPopup = new CertPasswordPopup(result.FileName);
 
                 var passResult = await this.ShowPopupAsync(passwordPopup);
 
@@ -57,16 +37,15 @@ public partial class MainPage : ContentPage
 
                 GeneratedCredentialsLabel.Text += cert.FriendlyName;
                 GeneratedCredentialsLabel.IsVisible = true;
-                LoadPortalItemButton.IsVisible = true;
-
-                await DisplayAlert("Success", "Certificate loaded successfully", "OK");
             }
+
+            return _credential;
         }
         catch(Exception ex) 
         {
             await DisplayAlert("Error", $"Failed to load certificate: {ex.Message}", "OK");
+            return null;
         }
-
     }
 
     private async Task<Credential> CreateCertCredential(CredentialRequestInfo info)
@@ -75,7 +54,19 @@ public partial class MainPage : ContentPage
         {
             if (info.AuthenticationType == AuthenticationType.Certificate)
             {
-                return _credential;
+                if (_credential != null)
+                {
+                    return _credential;
+                }
+                else
+                {
+                    await MainThread.InvokeOnMainThreadAsync(async () =>
+                    {
+                        await SelectCert();
+                    });
+
+                    return _credential;
+                }
             }
         }
         catch (Exception ex)

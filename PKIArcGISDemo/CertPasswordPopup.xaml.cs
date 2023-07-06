@@ -4,10 +4,16 @@ namespace PKIArcGISDemo;
 
 public partial class CertPasswordPopup : Popup
 {
-	public CertPasswordPopup()
+	public CertPasswordPopup(string fileName)
 	{
 		InitializeComponent();
+        Initialize(fileName);
 	}
+
+    private void Initialize(string fileName)
+    {
+        PasswordEntryLabel.Text += fileName;
+    }
 
     private void OkButton_Clicked(object sender, EventArgs e)
     {
