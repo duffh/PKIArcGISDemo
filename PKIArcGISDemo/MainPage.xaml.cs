@@ -7,7 +7,7 @@ namespace PKIArcGISDemo;
 
 public partial class MainPage : ContentPage
 {
-    private Credential _credential;
+    private CertificateCredential _credential;
 
     public MainPage()
     {
@@ -35,7 +35,7 @@ public partial class MainPage : ContentPage
                 var cert = new X509Certificate2(result.FullPath, (string)passResult);
                 _credential = new CertificateCredential(new Uri(PortalAddressEntry.Text), cert);
 
-                GeneratedCredentialsLabel.Text += cert.FriendlyName;
+                GeneratedCredentialsLabel.Text = $"Generated credentials for: {_credential.UserName}";
                 GeneratedCredentialsLabel.IsVisible = true;
             }
 
