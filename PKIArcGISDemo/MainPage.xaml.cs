@@ -30,9 +30,13 @@ public partial class MainPage : ContentPage
             {
                 var passwordPopup = new CertPasswordPopup(result.FileName);
 
-                var passResult = await this.ShowPopupAsync(passwordPopup);
+                var passwordResult = await this.ShowPopupAsync(passwordPopup);
 
-                var cert = new X509Certificate2(result.FullPath, (string)passResult);
+                using var stream = await result.OpenReadAsync();
+                var buffer = new byte[stream.Length];
+                stream.Read(buffer);
+                var cert = new X509Certificate2(buffer, (string)passwordResult);
+
                 _credential = new CertificateCredential(new Uri(PortalAddressEntry.Text), cert);
 
                 GeneratedCredentialsLabel.Text = $"Generated credentials for: {_credential.UserName}";
